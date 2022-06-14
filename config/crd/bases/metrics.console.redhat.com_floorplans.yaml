@@ -32,9 +32,73 @@ spec:
           spec:
             description: Spec defines the desired state of FloorPlan
             type: object
-            x-kubernetes-preserve-unknown-fields: true
+            required:
+              - database
+              - envName
+              - objectStore
+              - queries
+            properties:
+              database:
+                description: The database specification ClowdApp specification.
+                type: object
+                properties:
+                  sharedDbAppName:
+                    description: Defines the Name of the app to share a database from.
+                    type: string
+                required:
+                  - sharedDbAppName
+              envName:
+                description: The name of the ClowdEnvironment resource that this ClowdApp
+                  will use as its base. This does not mean that the ClowdApp needs
+                  to be placed in the same directory as the targetNamespace of the
+                  ClowdEnvironment.
+                type: string
+              logLevel:
+                description: Sets logging level of floorist execution. See
+                  https://docs.python.org/3/library/logging.html?highlight=logging#logging-levels
+                  for expected values.
+                type: string
+                default: INFO
+              objectStore:
+                description: Object Storage (S3) configuration.
+                type: object
+                properties:
+                  bucketName:
+                    description: Bucket name where the metrics will be exported to.
+                    type: string
+                  secretName:
+                    description: Name of the object store secret containing credentials.
+                    type: string
+                required:
+                  - bucketName
+              queries:
+                description: List of Floorist queries to export as prefix-query pairs.
+                type: array
+                items:
+                  description: Floorist Query definition.
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+                  properties:
+                    prefix:
+                      description: Valid folder path that will be created under the bucket.
+                      type: string
+                    query:
+                      description: A sinqle SQL query to export as metric.
+                      type: string
+                    chunksize:
+                      description:
+                      type: integer
+                  required:
+                    - prefix
+                    - query
+              suspend:
+                description: This flag tells the controller to suspend subsequent
+                  executions, it does not apply to already started executions.  Defaults
+                  to false. Only applies to Cronjobs
+                type: boolean
+                default: false
           status:
-            description: Status defines the observed state of FloorPlan
+            description: Status defines the observed state of FloorPlan.
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object

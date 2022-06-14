@@ -1,2 +1,8 @@
 ---
 # defaults file for FloorPlan
+queries: []
+database:
+  sharedDbAppName:
+objectStore:
+  bucketName:
+  secretName: metrics-export

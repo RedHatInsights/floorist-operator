@@ -3,4 +3,17 @@ kind: FloorPlan
 metadata:
   name: floorplan-sample
 spec:
-  # TODO(user): Add fields here
+  queries:
+  - prefix: dumps/people
+    query: >-
+      SELECT name, email, birthyear FROM people;
+  - prefix: dumps/cities
+    query: >-
+      SELECT name AS city_name, zip, country FROM cities;
+    chunksize: 100
+  envName: env-default
+  database:
+    sharedDbAppName: mydatabase
+  objectStore:
+    bucketName: mybucket
+    secretName: metrics-export
