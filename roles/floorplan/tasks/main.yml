@@ -1,2 +1,12 @@
 ---
 # tasks file for FloorPlan
+- name: set up floorplan
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: '{{ ansible_operator_meta.name }}-floorplan'
+        namespace: '{{ ansible_operator_meta.namespace }}'
+      data:
+        floorplan.yaml: '{{ queries | to_nice_yaml }}'
