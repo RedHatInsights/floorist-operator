@@ -13,7 +13,7 @@ spec:
     chunksize: 100
   envName: env-default
   database:
-    sharedDbAppName: mydatabase
+    sharedDbAppName: test-app
   objectStore:
     bucketName: mybucket
-    secretName: metrics-export
+    secretName: env-default-minio

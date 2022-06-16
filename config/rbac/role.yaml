@@ -38,6 +38,19 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - cloud.redhat.com
+    resources:
+      - clowdapps
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
   ##
   ## Rules for metrics.console.redhat.com/v1alpha1, Kind: FloorPlan
   ##

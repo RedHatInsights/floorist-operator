@@ -10,3 +10,72 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
       data:
         floorplan.yaml: '{{ queries | to_nice_yaml }}'
+- name: set up floorist schedule
+  kubernetes.core.k8s:
+    apply: yes
+    definition:
+      apiVersion: cloud.redhat.com/v1alpha1
+      kind: ClowdApp
+      metadata:
+        name: '{{ ansible_operator_meta.name }}-floorist'
+        namespace: '{{ ansible_operator_meta.namespace }}'
+      spec:
+        database:
+          sharedDbAppName: '{{ database.shared_db_app_name }}'
+        dependencies:
+          - '{{ database.shared_db_app_name }}'
+        envName: '{{ env_name }}'
+        jobs:
+        - name: metrics-exporter
+          suspend: "{{ suspend }}"
+          schedule: "0 2 * * *"
+          concurrencyPolicy: Forbid
+          podSpec:
+            image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
+            env:
+            - name: AWS_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ object_store.secret_name }}'
+                  key: bucket
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ object_store.secret_name }}'
+                  key: aws_region
+            - name: AWS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ object_store.secret_name }}'
+                  key: endpoint
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ object_store.secret_name }}'
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: '{{ object_store.secret_name }}'
+                  key: aws_secret_access_key
+            - name: FLOORPLAN_FILE
+              value: "/tmp/floorplan/floorplan.yaml"
+            - name: LOGLEVEL
+              value: '{{ log_level }}'
+            livenessProbe:
+              exec:
+                command: ["pgrep", "-f", "run"]
+            volumeMounts:
+            - name: floorplan-volume
+              mountPath: "/tmp/floorplan"
+            volumes:
+              - name: floorplan-volume
+                configMap:
+                  name: '{{ ansible_operator_meta.name }}-floorplan'
+            resources:
+              limits:
+                cpu: 100m
+                memory: 200Mi
+              requests:
+                cpu: 50m
+                memory: 100Mi
