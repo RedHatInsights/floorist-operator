@@ -1,0 +1,88 @@
+---
+apiVersion: cloud.redhat.com/v1alpha1
+kind: ClowdApp
+metadata:
+  name: test-app
+  namespace: default
+spec:
+  # The name of the ClowdEnvironment providing the services
+  envName: env-default
+
+  deployments:
+  - name: service
+    minReplicas: 1
+    podSpec:
+      image: docker.io/postgres:12
+      command: ["/bin/bash"]
+      args: ["-c", "/tmp/app.sh"]
+      env:
+      - name: PGHOST
+        valueFrom:
+          secretKeyRef:
+            name: test-app-db
+            key: hostname
+      - name:  PGDATABASE
+        valueFrom:
+          secretKeyRef:
+            name: test-app-db
+            key: name
+      - name: PGPASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: test-app-db
+            key: password
+      - name:  PGPORT
+        valueFrom:
+          secretKeyRef:
+            name: test-app-db
+            key: port
+      - name: PGUSER
+        valueFrom:
+          secretKeyRef:
+            name: test-app-db
+            key: username
+      resources:
+        limits:
+          cpu: 50m
+          memory: 100Mi
+        requests:
+          cpu: 20m
+          memory: 50Mi
+      volumeMounts:
+      - name: app-script-volume
+        mountPath: /tmp
+      volumes:
+        - name: app-script-volume
+          configMap:
+            name: app-script
+            defaultMode: 0755
+
+  database:
+    # Must specify both a name and a major postgres version
+    name: mydatabase
+    version: 12
+
+  objectStore:
+  - mybucket
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-script
+  namespace: default
+data:
+  app.sh: |
+    set -e
+    psql <<EOF
+      CREATE TABLE people (name VARCHAR(255), email VARCHAR(255), birthyear INT);
+      INSERT INTO people VALUES
+        ('My Name', 'My Email', 9999),
+        ('Your Name', 'Your Email', 1111);
+      CREATE TABLE cities (name VARCHAR(255), zip VARCHAR(255), country VARCHAR(255));
+      INSERT INTO cities VALUES
+        ('Ney York', '900 22', 'USA'),
+        ('Rio', '111 88', 'Brazil'),
+        ('Tokyo', '91378', 'Japan');
+    EOF
+
+    sleep infinity
