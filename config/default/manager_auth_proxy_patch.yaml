@@ -9,6 +9,12 @@ spec:
   template:
     spec:
       containers:
+      - name: manager
+        args:
+        - "--health-probe-bind-address=:6789"
+        - "--metrics-bind-address=127.0.0.1:8080"
+        - "--leader-elect"
+        - "--leader-election-id=floorist-operator"
       - name: kube-rbac-proxy
         image: gcr.io/kubebuilder/kube-rbac-proxy:v0.11.0
         args:
@@ -27,9 +33,3 @@ spec:
           requests:
             cpu: 5m
             memory: 64Mi
-      - name: manager
-        args:
-        - "--health-probe-bind-address=:6789"
-        - "--metrics-bind-address=127.0.0.1:8080"
-        - "--leader-elect"
-        - "--leader-election-id=floorist-operator"

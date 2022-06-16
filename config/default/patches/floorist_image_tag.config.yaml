@@ -1,0 +1,3 @@
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --ansible-args='--extra-vars "floorist_image_tag=a5d1b1b"'
