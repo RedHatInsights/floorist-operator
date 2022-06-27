@@ -82,3 +82,11 @@
               requests:
                 cpu: 50m
                 memory: 100Mi
+- name: set schedule status
+  operator_sdk.util.k8s_status:
+    api_version: metrics.console.redhat.com/v1alpha1
+    kind: FloorPlan
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    status:
+      schedule: "{{ schedule }}"
