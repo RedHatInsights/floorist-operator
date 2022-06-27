@@ -10,6 +10,9 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
       data:
         floorplan.yaml: '{{ queries | to_nice_yaml }}'
+- name: set schedule fact
+  ansible.builtin.set_fact:
+    schedule: "0 2 * * *"
 - name: set up floorist schedule
   kubernetes.core.k8s:
     apply: yes
@@ -28,7 +31,7 @@
         jobs:
         - name: metrics-exporter
           suspend: "{{ suspend }}"
-          schedule: "0 2 * * *"
+          schedule: "{{ schedule }}"
           concurrencyPolicy: Forbid
           podSpec:
             image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
