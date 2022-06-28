@@ -1,6 +1,6 @@
 ---
 # tasks file for FloorPlan
-- name: set up floorplan
+- name: Set up floorplan
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -10,7 +10,7 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
       data:
         floorplan.yaml: '{{ queries | to_nice_yaml }}'
-- name: gather facts from existing floorplans
+- name: Gather facts from existing floorplans
   ansible.builtin.set_fact:
     existing_schedule: "{{ _metrics_console_redhat_com_floorplan.get('status', {}).get('schedule') }}"
     # Gather used schedules from all FloorPlans from status.schedule attribute,
@@ -33,11 +33,11 @@
           | difference(skip_schedules)
           | list
         }}"
-- name: set schedule fact
+- name: Set schedule fact
   ansible.builtin.set_fact:
     schedule:
       "{{ existing_schedule | default((available_slots | difference(used_slots) | first) + ' * * *', true) }}"
-- name: set up floorist schedule
+- name: Set up floorist schedule
   kubernetes.core.k8s:
     apply: yes
     definition:
@@ -106,7 +106,7 @@
               requests:
                 cpu: 50m
                 memory: 100Mi
-- name: set schedule status
+- name: Set schedule status
   operator_sdk.util.k8s_status:
     api_version: metrics.console.redhat.com/v1alpha1
     kind: FloorPlan
