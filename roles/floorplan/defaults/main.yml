@@ -2,6 +2,8 @@
 # defaults file for FloorPlan
 floorist_image_tag: latest
 schedule_step: 5 # in minutes (max 60)
+skip_schedules: # list of schedules that should be skipped, strings of 'min hr'
+  - '0 0'
 env_name: env-default
 queries: []
 database:

@@ -30,6 +30,7 @@
           | product(range(0, 60, schedule_step))
           | map('join', ' ')
           | map('regex_replace', '^([^ ]+) ([^ ]+)$', '\\2 \\1')
+          | difference(skip_schedules)
           | list
         }}"
 - name: set schedule fact
