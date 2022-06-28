@@ -5,6 +5,7 @@ Kubernetes Operator to manage scheduling of metrics export with [Floorist](https
 ## TOC
 
 1. [Description](#description)
+   1. [Scheduling](#scheduling)
 2. [Installation](#installation)
 3. [Usage](#usage)
 4. [Development](#development)
@@ -27,10 +28,25 @@ with a daily schedule.
 Advantages of having Floorist managed within operator are:
 * central configuration of Floorist version/image managed across all namespaces,
 * ease of configuration,
-* dynamic scheduling (*FutureFeature).
+* dynamic scheduling
 
 The operator is build using [Ansible Operator SDK](https://sdk.operatorframework.io/docs/building-operators/ansible/)
 leveraging [kubernetes.core.k8s](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html) Ansible module.
+
+### Scheduling
+
+Each `FloorPlan` resource/instace will get a non-conflicting schedule assigned.
+Schedule assignement is selected as the first available slot during a day in a predefined interval.
+By default this interval is 5 minutes, configured via `schedule_step` Ansible variable (max value is 60).
+
+Midninght (00:00) is by default reserved.
+The first schedule starts at `00:05` (with default 5 min. interval).
+Slot constraints can be set via `skip_schedules` Ansible variable.
+
+There is an upper limit on the number of `FloorPlan`s which is by default **287**.
+The formula for different settings is: `24 * (60 / schedule_step)`.
+
+Schedule of a single `FloorPlan` stays constant for the whole duration of its lifetime.
 
 ## Installation
 
