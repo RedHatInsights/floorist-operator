@@ -79,9 +79,17 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 podman-build: ## Build podman image with the manager.
 	podman build -t ${IMG} .
 
+.PHONY: podman-tag-latest
+podman-tag-latest: ## Tag current image as latest
+	podman tag ${IMG} $(IMAGE_TAG_BASE):latest
+
 .PHONY: podman-push
 podman-push: ## Push podman image with the manager.
 	podman push ${IMG}
+
+.PHONY: podman-push-latest
+podman-push-latest: ## Push podman image with the manager.
+	podman push $(IMAGE_TAG_BASE):latest
 
 ##@ Deployment
 
