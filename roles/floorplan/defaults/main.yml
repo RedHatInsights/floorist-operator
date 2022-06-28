@@ -1,6 +1,7 @@
 ---
 # defaults file for FloorPlan
 floorist_image_tag: latest
+schedule_step: 5 # in minutes (max 60)
 env_name: env-default
 queries: []
 database:

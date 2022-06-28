@@ -27,7 +27,7 @@
     # Hours are generated first, but then swapped, to ensure sequence.
     available_slots:
       "{{ range(0, 24)
-          | product(range(0, 60, 5))
+          | product(range(0, 60, schedule_step))
           | map('join', ' ')
           | map('regex_replace', '^([^ ]+) ([^ ]+)$', '\\2 \\1')
           | list
