@@ -10,9 +10,32 @@
         namespace: '{{ ansible_operator_meta.namespace }}'
       data:
         floorplan.yaml: '{{ queries | to_nice_yaml }}'
+- name: gather facts from existing floorplans
+  ansible.builtin.set_fact:
+    existing_schedule: "{{ _metrics_console_redhat_com_floorplan.get('status', {}).get('schedule') }}"
+    # Gather used schedules from all FloorPlans from status.schedule attribute,
+    # taking only mintues and hours.
+    used_slots:
+      "{{ query('kubernetes.core.k8s', api_version='metrics.console.redhat.com/v1alpha1', kind='FloorPlan')
+          | map(attribute='status', default={})
+          | map(attribute='schedule', default='')
+          | map('regex_replace', '^([^ ]+) ([^ ]+).*$', '\\1 \\2')
+          | list
+        }}"
+    # Generate available schedules as a product of hours and mintues
+    # with a certain step.
+    # Hours are generated first, but then swapped, to ensure sequence.
+    available_slots:
+      "{{ range(0, 24)
+          | product(range(0, 60, 5))
+          | map('join', ' ')
+          | map('regex_replace', '^([^ ]+) ([^ ]+)$', '\\2 \\1')
+          | list
+        }}"
 - name: set schedule fact
   ansible.builtin.set_fact:
-    schedule: "0 2 * * *"
+    schedule:
+      "{{ existing_schedule | default((available_slots | difference(used_slots) | first) + ' * * *', true) }}"
 - name: set up floorist schedule
   kubernetes.core.k8s:
     apply: yes
