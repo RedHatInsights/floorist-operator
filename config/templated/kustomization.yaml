@@ -1,0 +1,9 @@
+
+namespace: floorist-operator-system
+
+namePrefix: floorist-operator-
+
+resources:
+- ../crd
+- ../rbac
+- ../proxied_manager
