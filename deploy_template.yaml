@@ -1,0 +1,406 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: floorist-operator
+objects:
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    labels:
+      control-plane: controller-manager
+    name: floorist-operator-system
+- apiVersion: apiextensions.k8s.io/v1
+  kind: CustomResourceDefinition
+  metadata:
+    name: floorplans.metrics.console.redhat.com
+  spec:
+    group: metrics.console.redhat.com
+    names:
+      kind: FloorPlan
+      listKind: FloorPlanList
+      plural: floorplans
+      singular: floorplan
+    scope: Namespaced
+    versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: FloorPlan is the Schema for the floorplans API
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+                of an object. Servers should convert recognized schemas to the latest
+                internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource
+                this object represents. Servers may infer this from the endpoint the
+                client submits requests to. Cannot be updated. In CamelCase. More
+                info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: Spec defines the desired state of FloorPlan
+              properties:
+                database:
+                  description: The database specification ClowdApp specification.
+                  properties:
+                    sharedDbAppName:
+                      description: Defines the Name of the app to share a database
+                        from.
+                      type: string
+                  required:
+                  - sharedDbAppName
+                  type: object
+                envName:
+                  description: The name of the ClowdEnvironment resource that this
+                    ClowdApp will use as its base. This does not mean that the ClowdApp
+                    needs to be placed in the same directory as the targetNamespace
+                    of the ClowdEnvironment.
+                  type: string
+                logLevel:
+                  default: INFO
+                  description: Sets logging level of floorist execution. See https://docs.python.org/3/library/logging.html?highlight=logging#logging-levels
+                    for expected values.
+                  type: string
+                objectStore:
+                  description: Object Storage (S3) configuration.
+                  properties:
+                    bucketName:
+                      description: Bucket name where the metrics will be exported
+                        to.
+                      type: string
+                    secretName:
+                      description: Name of the object store secret containing credentials.
+                      type: string
+                  required:
+                  - bucketName
+                  type: object
+                queries:
+                  description: List of Floorist queries to export as prefix-query
+                    pairs.
+                  items:
+                    description: Floorist Query definition.
+                    properties:
+                      chunksize:
+                        description:
+                        type: integer
+                      prefix:
+                        description: Valid folder path that will be created under
+                          the bucket.
+                        type: string
+                      query:
+                        description: A sinqle SQL query to export as metric.
+                        type: string
+                    required:
+                    - prefix
+                    - query
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  type: array
+                suspend:
+                  default: false
+                  description: This flag tells the controller to suspend subsequent
+                    executions, it does not apply to already started executions.  Defaults
+                    to false. Only applies to Cronjobs
+                  type: boolean
+              required:
+              - database
+              - envName
+              - objectStore
+              - queries
+              type: object
+            status:
+              description: Status defines the observed state of FloorPlan.
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: floorist-operator-controller-manager
+    namespace: floorist-operator-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: floorist-operator-leader-election-role
+    namespace: floorist-operator-system
+  rules:
+  - apiGroups:
+    - ''
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+  - apiGroups:
+    - ''
+    resources:
+    - events
+    verbs:
+    - create
+    - patch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: floorist-operator-manager-role
+  rules:
+  - apiGroups:
+    - ''
+    resources:
+    - secrets
+    - pods
+    - pods/exec
+    - pods/log
+    - configmaps
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    - daemonsets
+    - replicasets
+    - statefulsets
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - cloud.redhat.com
+    resources:
+    - clowdapps
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - metrics.console.redhat.com
+    resources:
+    - floorplans
+    - floorplans/status
+    - floorplans/finalizers
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: floorist-operator-metrics-reader
+  rules:
+  - nonResourceURLs:
+    - "/metrics"
+    verbs:
+    - get
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: floorist-operator-proxy-role
+  rules:
+  - apiGroups:
+    - authentication.k8s.io
+    resources:
+    - tokenreviews
+    verbs:
+    - create
+  - apiGroups:
+    - authorization.k8s.io
+    resources:
+    - subjectaccessreviews
+    verbs:
+    - create
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: floorist-operator-leader-election-rolebinding
+    namespace: floorist-operator-system
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: floorist-operator-leader-election-role
+  subjects:
+  - kind: ServiceAccount
+    name: floorist-operator-controller-manager
+    namespace: floorist-operator-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: floorist-operator-manager-rolebinding
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: floorist-operator-manager-role
+  subjects:
+  - kind: ServiceAccount
+    name: floorist-operator-controller-manager
+    namespace: floorist-operator-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: floorist-operator-proxy-rolebinding
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: floorist-operator-proxy-role
+  subjects:
+  - kind: ServiceAccount
+    name: floorist-operator-controller-manager
+    namespace: floorist-operator-system
+- apiVersion: v1
+  data:
+    controller_manager_config.yaml: |
+      apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
+      kind: ControllerManagerConfig
+      health:
+        healthProbeBindAddress: :6789
+      metrics:
+        bindAddress: 127.0.0.1:8080
+
+      leaderElection:
+        leaderElect: true
+        resourceName: 811c9dc5.console.redhat.com
+  kind: ConfigMap
+  metadata:
+    name: floorist-operator-manager-config
+    namespace: floorist-operator-system
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      control-plane: controller-manager
+    name: floorist-operator-controller-manager-metrics-service
+    namespace: floorist-operator-system
+  spec:
+    ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    selector:
+      control-plane: controller-manager
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      control-plane: controller-manager
+    name: floorist-operator-controller-manager
+    namespace: floorist-operator-system
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        control-plane: controller-manager
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/default-container: manager
+        labels:
+          control-plane: controller-manager
+      spec:
+        containers:
+        - args:
+          - "--health-probe-bind-address=:6789"
+          - "--metrics-bind-address=127.0.0.1:8080"
+          - "--leader-elect"
+          - "--leader-election-id=floorist-operator"
+          - --ansible-args='--extra-vars "floorist_image_tag=a5d1b1b"'
+          env:
+          - name: ANSIBLE_GATHERING
+            value: explicit
+          image: quay.io/cloudservices/floorist-operator:latest
+          livenessProbe:
+            httpGet:
+              path: "/healthz"
+              port: 6789
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          name: manager
+          readinessProbe:
+            httpGet:
+              path: "/readyz"
+              port: 6789
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 768Mi
+            requests:
+              cpu: 10m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+        - args:
+          - "--secure-listen-address=0.0.0.0:8443"
+          - "--upstream=http://127.0.0.1:8080/"
+          - "--logtostderr=true"
+          - "--v=0"
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.11.0
+          name: kube-rbac-proxy
+          ports:
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 5m
+              memory: 64Mi
+        securityContext:
+          runAsNonRoot: true
+        serviceAccountName: floorist-operator-controller-manager
+        terminationGracePeriodSeconds: 10
+parameters:
+- description: Operator image
+  name: IMAGE
+  value: quay.io/cloudservices/floorist-operator
+- description: Operator image tag
+  name: IMAGE_TAG
+  value: latest
+- description: Floorist extractor tool image tag
+  name: FLOORIST_IMAGE_TAG
+  value: latest
