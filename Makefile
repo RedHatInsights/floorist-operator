@@ -49,6 +49,9 @@ endif
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 
+# OpenShift Template file
+OPENSHIFT_TEMPLATE ?= deploy_template.yaml
+
 .PHONY: all
 all: podman-build
 
@@ -128,6 +131,12 @@ else
 KUSTOMIZE = $(shell which kustomize)
 endif
 endif
+
+.PHONY: openshift-template
+openshift-template: kustomize
+	$(KUSTOMIZE) build config/default | \
+	config/plugins/openshift_template_generator.rb config/templated/template_params.yaml \
+	> "${OPENSHIFT_TEMPLATE}"
 
 .PHONY: ansible-operator
 ANSIBLE_OPERATOR = $(shell pwd)/bin/ansible-operator
