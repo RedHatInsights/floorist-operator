@@ -12,7 +12,8 @@ Kubernetes Operator to manage scheduling of metrics export with [Floorist](https
    1. [Prerequisites](#prerequisites)
    2. [Test environment](#test-environment)
    3. [Build and deploy](#build-and-deploy)
-   4. [Trying it out](#trying-it-out)
+   4. [OpenShift template](#openshift-template)
+   5. [Trying it out](#trying-it-out)
 
 
 ## Description
@@ -151,6 +152,21 @@ Build, push, and deploy floorist-operator
 VERSION=SETOPERATORIMAGETAG make podman-build podman-push deploy
 ```
 Replace `SETOPERATORIMAGETAG` with desired image tag for the operator.
+
+### OpenShift template
+
+OpenShift utilizes [`Template`](https://docs.openshift.com/container-platform/4.7/openshift_images/using-templates.html)
+resources.
+Due to current limitation in some environments there was a `openshift-teplate` Makefile target created
+along with [`openshift_template_generator.rb`](config/plugins/openshift_template_generator.rb) tool.
+The `openshift-teplate` target generates an OpenShift `Template` out of kustomized resources
+configured within [`config/templated/`](config/templated/kustomization.yaml).
+
+To (re)generate OpenShift template for this operator use:
+```
+make openshift-template
+```
+The result is writte in the `deploy_template.yaml` file.
 
 ### Trying it out
 
