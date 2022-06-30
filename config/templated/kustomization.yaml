@@ -7,3 +7,11 @@ resources:
 - ../crd
 - ../rbac
 - ../proxied_manager
+
+patchesJson6902:
+- path: manager_params.config.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: controller-manager
