@@ -12,7 +12,7 @@ login_container_registry() {
 
 IMAGE_TAG=$(git rev-parse --short=7 HEAD)
 
-login_container_registry "$QUAY_USER" "$QUAY_TOKEN" "$QUAY_REGISTRY"
+login_container_registry "$QUAY_USER" "$QUAY_TOKEN" "quay.io"
 login_container_registry "$RH_REGISTRY_USER" "$RH_REGISTRY_TOKEN" "registry.redhat.io"
 
 VERSION=$IMAGE_TAG make podman-build podman-tag-latest podman-push podman-push-latest
