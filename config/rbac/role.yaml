@@ -39,9 +39,9 @@ rules:
       - update
       - watch
   - apiGroups:
-      - cloud.redhat.com
+      - batch
     resources:
-      - clowdapps
+      - cronjobs
     verbs:
       - create
       - delete

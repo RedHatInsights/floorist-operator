@@ -11,9 +11,7 @@ spec:
     query: >-
       SELECT name AS city_name, zip, country FROM cities;
     chunksize: 100
-  envName: env-default
   database:
-    sharedDbAppName: test-app
+    secretName: postgresql-credentials
   objectStore:
-    bucketName: mybucket
-    secretName: env-default-minio
+    secretName: minio-access

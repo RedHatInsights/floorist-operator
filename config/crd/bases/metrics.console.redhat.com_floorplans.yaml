@@ -34,7 +34,6 @@ spec:
             type: object
             required:
               - database
-              - envName
               - objectStore
               - queries
             properties:
@@ -49,7 +48,7 @@ spec:
                     description: Secret containing a database credentials.
                     type: string
                 required:
-                  - sharedDbAppName
+                  - secretName
               envName:
                 description: The name of the ClowdEnvironment resource that this ClowdApp
                   will use as its base. This does not mean that the ClowdApp needs
@@ -73,7 +72,7 @@ spec:
                     description: Name of the object store secret containing credentials.
                     type: string
                 required:
-                  - bucketName
+                  - secretName
               queries:
                 description: List of Floorist queries to export as prefix-query pairs.
                 type: array

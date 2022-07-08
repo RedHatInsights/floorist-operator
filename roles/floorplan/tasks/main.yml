@@ -41,71 +41,116 @@
   kubernetes.core.k8s:
     apply: yes
     definition:
-      apiVersion: cloud.redhat.com/v1alpha1
-      kind: ClowdApp
+      apiVersion: batch/v1
+      kind: CronJob
       metadata:
-        name: '{{ ansible_operator_meta.name }}-floorist'
+        name: '{{ ansible_operator_meta.name }}-exporter'
         namespace: '{{ ansible_operator_meta.namespace }}'
+        labels:
+          app: '{{ ansible_operator_meta.name }}-floorist'
+          pod: '{{ ansible_operator_meta.name }}-exporter'
+          service: floorist
       spec:
-        database:
-          sharedDbAppName: '{{ database.shared_db_app_name }}'
-        dependencies:
-          - '{{ database.shared_db_app_name }}'
-        envName: '{{ env_name }}'
-        jobs:
-        - name: metrics-exporter
-          suspend: "{{ suspend }}"
-          schedule: "{{ schedule }}"
-          concurrencyPolicy: Forbid
-          podSpec:
-            image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
-            env:
-            - name: AWS_BUCKET
-              valueFrom:
-                secretKeyRef:
-                  name: '{{ object_store.secret_name }}'
-                  key: bucket
-            - name: AWS_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: '{{ object_store.secret_name }}'
-                  key: aws_region
-            - name: AWS_ENDPOINT
-              valueFrom:
-                secretKeyRef:
-                  name: '{{ object_store.secret_name }}'
-                  key: endpoint
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: '{{ object_store.secret_name }}'
-                  key: aws_access_key_id
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: '{{ object_store.secret_name }}'
-                  key: aws_secret_access_key
-            - name: FLOORPLAN_FILE
-              value: "/tmp/floorplan/floorplan.yaml"
-            - name: LOGLEVEL
-              value: '{{ log_level }}'
-            livenessProbe:
-              exec:
-                command: ["pgrep", "-f", "run"]
-            volumeMounts:
-            - name: floorplan-volume
-              mountPath: "/tmp/floorplan"
-            volumes:
-              - name: floorplan-volume
-                configMap:
-                  name: '{{ ansible_operator_meta.name }}-floorplan'
-            resources:
-              limits:
-                cpu: 100m
-                memory: 200Mi
-              requests:
-                cpu: 50m
-                memory: 100Mi
+        concurrencyPolicy: Forbid
+        failedJobsHistoryLimit: 1
+        successfulJobsHistoryLimit: 3
+        schedule: "{{ schedule }}"
+        suspend: "{{ suspend }}"
+        jobTemplate:
+          metadata:
+            name: '{{ ansible_operator_meta.name }}-exporter'
+            namespace: '{{ ansible_operator_meta.namespace }}'
+            labels:
+              app: '{{ ansible_operator_meta.name }}-floorist'
+              pod: '{{ ansible_operator_meta.name }}-exporter'
+              service: floorist
+          spec:
+            template:
+              spec:
+                restartPolicy: Never
+                terminationGracePeriodSeconds: 30
+                containers:
+                - image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
+                  imagePullPolicy: IfNotPresent
+                  env:
+                  - name: AWS_BUCKET
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ object_store.secret_name }}'
+                        key: bucket
+                  - name: AWS_REGION
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ object_store.secret_name }}'
+                        key: aws_region
+                  - name: AWS_ENDPOINT
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ object_store.secret_name }}'
+                        key: endpoint
+                  - name: AWS_ACCESS_KEY_ID
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ object_store.secret_name }}'
+                        key: aws_access_key_id
+                  - name: AWS_SECRET_ACCESS_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ object_store.secret_name }}'
+                        key: aws_secret_access_key
+                  - name: POSTGRES_SERVICE_HOST
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ database.secret_name }}'
+                        key: db.host
+                  - name: POSTGRESQL_USER
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ database.secret_name }}'
+                        key: db.user
+                  - name: POSTGRESQL_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ database.secret_name }}'
+                        key: db.password
+                  - name: POSTGRESQL_DATABASE
+                    valueFrom:
+                      secretKeyRef:
+                        name: '{{ database.secret_name }}'
+                        key: db.name
+                  - name: FLOORPLAN_FILE
+                    value: "/tmp/floorplan/floorplan.yaml"
+                  - name: LOGLEVEL
+                    value: '{{ log_level }}'
+                  livenessProbe:
+                    exec:
+                      command: ["pgrep", "-f", "run"]
+                    failureThreshold: 3
+                    periodSeconds: 10
+                    successThreshold: 1
+                    timeoutSeconds: 1
+                  name: '{{ ansible_operator_meta.name }}-exporter'
+                  ports:
+                  - containerPort: 9000
+                    name: metrics
+                    protocol: TCP
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 200Mi
+                    requests:
+                      cpu: 50m
+                      memory: 100Mi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                  - mountPath: /tmp/floorplan
+                    name: floorplan-volume
+                volumes:
+                - configMap:
+                    defaultMode: 420
+                    name: '{{ ansible_operator_meta.name }}-floorplan'
+                  name: floorplan-volume
 - name: Set schedule status
   operator_sdk.util.k8s_status:
     api_version: metrics.console.redhat.com/v1alpha1
