@@ -45,6 +45,9 @@ spec:
                   sharedDbAppName:
                     description: Defines the Name of the app to share a database from.
                     type: string
+                  secretName:
+                    description: Secret containing a database credentials.
+                    type: string
                 required:
                   - sharedDbAppName
               envName:
