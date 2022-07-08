@@ -1,0 +1,49 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: createbucket
+    pod: mc-createbucket
+  name: createbucket
+spec:
+  template:
+    metadata:
+      labels:
+        app: createbucket
+        pod: mc-createbucket
+    spec:
+      containers:
+      - env:
+        - name: MINIO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              key: endpoint
+              name: minio-access
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_access_key_id
+              name: minio-access
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_secret_access_key
+              name: minio-access
+        - name: MINIO_BUCKET
+          valueFrom:
+            secretKeyRef:
+              key: bucket
+              name: minio-access
+        image: docker.io/minio/mc
+        name: createbucket
+        command:
+          - /bin/bash
+          - -c
+          - |
+            set -e
+            /usr/bin/mc config host add myminio "$MINIO_ENDPOINT" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
+            /usr/bin/mc mb "myminio/$MINIO_BUCKET";
+            /usr/bin/mc policy set download "myminio/$MINIO_BUCKET";
+            exit 0;
+      restartPolicy: OnFailure

@@ -1,0 +1,22 @@
+# Adds namespace to all resources.
+namespace: default
+
+resources:
+- postgresql-db.yaml
+- minio.yaml
+- createbucket.yaml
+- populator.yaml
+
+generatorOptions:
+  # needed for secrets to be accessible by operator created cronjobs
+  disableNameSuffixHash: true
+
+secretGenerator:
+- name: postgresql-credentials
+  type: Opaque
+  envs:
+  - .secrets/database.txt
+- name: minio-access
+  type: Opaque
+  envs:
+  - .secrets/minio.txt

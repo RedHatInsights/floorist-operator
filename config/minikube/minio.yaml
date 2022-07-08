@@ -1,0 +1,88 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minio
+    service: objectstore
+  name: minio
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: minio
+      service: objectstore
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: minio
+        service: objectstore
+    spec:
+      containers:
+      - args:
+        - server
+        - /storage
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_access_key_id
+              name: minio-access
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: aws_secret_access_key
+              name: minio-access
+        image: quay.io/cloudservices/minio:RELEASE.2020-11-19T23-48-16Z-amd64
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 9000
+          timeoutSeconds: 2
+        name: minio
+        ports:
+        - containerPort: 9000
+          name: minio
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 9000
+          timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: /storage
+          name: minio-storage
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: minio-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: minio
+    service: objectstore
+  name: objectstore
+spec:
+  selector:
+    app: minio
+    service: objectstore
+  ports:
+  - port: 9000
+    targetPort: minio

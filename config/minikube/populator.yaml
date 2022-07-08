@@ -1,0 +1,85 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: populator
+    pod: test-app
+  name: populator
+spec:
+  template:
+    metadata:
+      labels:
+        app: populator
+        pod: test-app
+    spec:
+      containers:
+      - args:
+        - -c
+        - /tmp/app.sh
+        command:
+        - /bin/bash
+        env:
+        - name: PGHOST
+          valueFrom:
+            secretKeyRef:
+              key: db.host
+              name: postgresql-credentials
+        - name: PGDATABASE
+          valueFrom:
+            secretKeyRef:
+              key: db.name
+              name: postgresql-credentials
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db.password
+              name: postgresql-credentials
+        - name: PGPORT
+          valueFrom:
+            secretKeyRef:
+              key: db.port
+              name: postgresql-credentials
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              key: db.user
+              name: postgresql-credentials
+        image: docker.io/postgres:12
+        name: populator
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /tmp
+          name: app-script-volume
+      restartPolicy: OnFailure
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: app-script
+        name: app-script-volume
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-script
+  namespace: default
+data:
+  app.sh: |
+    set -e
+    psql <<EOF
+      CREATE TABLE people (name VARCHAR(255), email VARCHAR(255), birthyear INT);
+      INSERT INTO people VALUES
+        ('My Name', 'My Email', 9999),
+        ('Your Name', 'Your Email', 1111);
+      CREATE TABLE cities (name VARCHAR(255), zip VARCHAR(255), country VARCHAR(255));
+      INSERT INTO cities VALUES
+        ('Ney York', '900 22', 'USA'),
+        ('Rio', '111 88', 'Brazil'),
+        ('Tokyo', '91378', 'Japan');
+    EOF

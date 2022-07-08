@@ -1,0 +1,124 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgresql
+    service: db
+  name: postgresql
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: postgresql
+      service: db
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        service: db
+    spec:
+      containers:
+      - env:
+        - name: POSTGRESQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: db.user
+              name: postgresql-credentials
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db.password
+              name: postgresql-credentials
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db.admin_password
+              name: postgresql-credentials
+        - name: POSTGRESQL_MASTER_USER
+          valueFrom:
+            secretKeyRef:
+              key: db.admin_user
+              name: postgresql-credentials
+        - name: POSTGRESQL_MASTER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: db.admin_password
+              name: postgresql-credentials
+        - name: POSTGRESQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: db.name
+              name: postgresql-credentials
+        image: quay.io/cloudservices/postgresql-rds:12-9ee2984
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - $(POSTGRESQL_USER)
+            - -d
+            - $(POSTGRESQL_DATABASE)
+            - -c
+            - SELECT 1
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: db
+        ports:
+        - containerPort: 5432
+          name: database
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - $(POSTGRESQL_USER)
+            - -d
+            - $(POSTGRESQL_DATABASE)
+            - -c
+            - SELECT 1
+          failureThreshold: 3
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 1200m
+            memory: 1Gi
+          requests:
+            cpu: 600m
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /var/lib/pgsql/data
+          name: db-storage
+      restartPolicy: Always
+      volumes:
+      - emptyDir: {}
+        name: db-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: postgresql
+    service: db
+  name: database
+spec:
+  selector:
+    app: postgresql
+    service: db
+  ports:
+  - port: 5432
+    targetPort: 5432
