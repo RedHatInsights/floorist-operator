@@ -139,7 +139,7 @@ endif
 
 .PHONY: openshift-template
 openshift-template: kustomize
-	$(KUSTOMIZE) build config/default | \
+	$(KUSTOMIZE) build config/templated | \
 	config/plugins/openshift_template_generator.rb config/templated/template_params.yaml \
 	> "${OPENSHIFT_TEMPLATE}"
 

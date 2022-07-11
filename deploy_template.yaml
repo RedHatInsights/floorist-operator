@@ -4,12 +4,6 @@ kind: Template
 metadata:
   name: floorist-operator
 objects:
-- apiVersion: v1
-  kind: Namespace
-  metadata:
-    labels:
-      control-plane: controller-manager
-    name: floorist-operator-system
 - apiVersion: apiextensions.k8s.io/v1
   kind: CustomResourceDefinition
   metadata:
@@ -259,11 +253,11 @@ objects:
         - args:
           - "--leader-elect"
           - "--leader-election-id=floorist-operator"
-          - --ansible-args='--extra-vars "floorist_image_tag=a5d1b1b"'
+          - --ansible-args='--extra-vars "floorist_image_tag=${FLOORIST_IMAGE_TAG}"'
           env:
           - name: ANSIBLE_GATHERING
             value: explicit
-          image: quay.io/cloudservices/floorist-operator:latest
+          image: "${IMAGE}:${IMAGE_TAG}"
           livenessProbe:
             httpGet:
               path: "/healthz"
