@@ -6,7 +6,7 @@ namePrefix: floorist-operator-
 resources:
 - ../crd
 - ../rbac
-- ../proxied_manager
+- ../manager
 
 patchesJson6902:
 - path: manager_params.config.yaml

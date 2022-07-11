@@ -195,32 +195,6 @@ objects:
     - update
     - watch
 - apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRole
-  metadata:
-    name: floorist-operator-metrics-reader
-  rules:
-  - nonResourceURLs:
-    - "/metrics"
-    verbs:
-    - get
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRole
-  metadata:
-    name: floorist-operator-proxy-role
-  rules:
-  - apiGroups:
-    - authentication.k8s.io
-    resources:
-    - tokenreviews
-    verbs:
-    - create
-  - apiGroups:
-    - authorization.k8s.io
-    resources:
-    - subjectaccessreviews
-    verbs:
-    - create
-- apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
     name: floorist-operator-leader-election-rolebinding
@@ -245,18 +219,6 @@ objects:
   - kind: ServiceAccount
     name: floorist-operator-controller-manager
     namespace: floorist-operator-system
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRoleBinding
-  metadata:
-    name: floorist-operator-proxy-rolebinding
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: floorist-operator-proxy-role
-  subjects:
-  - kind: ServiceAccount
-    name: floorist-operator-controller-manager
-    namespace: floorist-operator-system
 - apiVersion: v1
   data:
     controller_manager_config.yaml: |
@@ -274,21 +236,6 @@ objects:
   metadata:
     name: floorist-operator-manager-config
     namespace: floorist-operator-system
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      control-plane: controller-manager
-    name: floorist-operator-controller-manager-metrics-service
-    namespace: floorist-operator-system
-  spec:
-    ports:
-    - name: https
-      port: 8443
-      protocol: TCP
-      targetPort: https
-    selector:
-      control-plane: controller-manager
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -310,8 +257,6 @@ objects:
       spec:
         containers:
         - args:
-          - "--health-probe-bind-address=:6789"
-          - "--metrics-bind-address=127.0.0.1:8080"
           - "--leader-elect"
           - "--leader-election-id=floorist-operator"
           - --ansible-args='--extra-vars "floorist_image_tag=a5d1b1b"'
@@ -341,24 +286,6 @@ objects:
               memory: 256Mi
           securityContext:
             allowPrivilegeEscalation: false
-        - args:
-          - "--secure-listen-address=0.0.0.0:8443"
-          - "--upstream=http://127.0.0.1:8080/"
-          - "--logtostderr=true"
-          - "--v=0"
-          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.11.0
-          name: kube-rbac-proxy
-          ports:
-          - containerPort: 8443
-            name: https
-            protocol: TCP
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
-            requests:
-              cpu: 5m
-              memory: 64Mi
         securityContext:
           runAsNonRoot: true
         serviceAccountName: floorist-operator-controller-manager
