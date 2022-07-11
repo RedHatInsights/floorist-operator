@@ -113,6 +113,11 @@ deploy: kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/c
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config.
 	$(KUSTOMIZE) build config/default | kubectl delete -f -
 
+minikube-secrets: config/minikube/.secrets/database.txt config/minikube/.secrets/minio.txt
+
+config/minikube/.secrets/database.txt config/minikube/.secrets/minio.txt:
+	config/minikube/generate_secrets.sh
+
 OS := $(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH := $(shell uname -m | sed 's/x86_64/amd64/')
 
