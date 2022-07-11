@@ -1,3 +1,0 @@
-resources:
-- bases/clowdenv.yaml
-- bases/test-clowdapp.yaml
