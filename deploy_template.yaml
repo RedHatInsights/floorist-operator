@@ -47,19 +47,12 @@ objects:
                 database:
                   description: The database specification ClowdApp specification.
                   properties:
-                    sharedDbAppName:
-                      description: Defines the Name of the app to share a database
-                        from.
+                    secretName:
+                      description: Secret containing a database credentials.
                       type: string
                   required:
-                  - sharedDbAppName
+                  - secretName
                   type: object
-                envName:
-                  description: The name of the ClowdEnvironment resource that this
-                    ClowdApp will use as its base. This does not mean that the ClowdApp
-                    needs to be placed in the same directory as the targetNamespace
-                    of the ClowdEnvironment.
-                  type: string
                 logLevel:
                   default: INFO
                   description: Sets logging level of floorist execution. See https://docs.python.org/3/library/logging.html?highlight=logging#logging-levels
@@ -68,15 +61,11 @@ objects:
                 objectStore:
                   description: Object Storage (S3) configuration.
                   properties:
-                    bucketName:
-                      description: Bucket name where the metrics will be exported
-                        to.
-                      type: string
                     secretName:
                       description: Name of the object store secret containing credentials.
                       type: string
                   required:
-                  - bucketName
+                  - secretName
                   type: object
                 queries:
                   description: List of Floorist queries to export as prefix-query
@@ -108,7 +97,6 @@ objects:
                   type: boolean
               required:
               - database
-              - envName
               - objectStore
               - queries
               type: object
@@ -200,9 +188,9 @@ objects:
     - update
     - watch
   - apiGroups:
-    - cloud.redhat.com
+    - batch
     resources:
-    - clowdapps
+    - cronjobs
     verbs:
     - create
     - delete
