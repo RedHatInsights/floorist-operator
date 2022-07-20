@@ -50,6 +50,8 @@
           app: '{{ ansible_operator_meta.name }}-floorist'
           pod: 'floorist-{{ ansible_operator_meta.name }}-exporter'
           service: floorist
+        annotations:
+          ignore-check.kube-linter.io/default-service-account: "not used, k8s API access not required"
       spec:
         concurrencyPolicy: Forbid
         failedJobsHistoryLimit: 1
