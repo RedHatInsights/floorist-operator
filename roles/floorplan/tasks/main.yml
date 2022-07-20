@@ -69,6 +69,7 @@
               spec:
                 restartPolicy: Never
                 terminationGracePeriodSeconds: 30
+                automountServiceAccountToken: false
                 containers:
                 - image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
                   imagePullPolicy: IfNotPresent
