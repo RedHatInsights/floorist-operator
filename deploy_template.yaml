@@ -292,6 +292,8 @@ objects:
     template:
       metadata:
         annotations:
+          ignore-check.kube-linter.io/minimum-three-replicas: minimum three replicas
+            not required
           kubectl.kubernetes.io/default-container: manager
         labels:
           control-plane: controller-manager

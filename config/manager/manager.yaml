@@ -15,6 +15,7 @@ spec:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: manager
+        ignore-check.kube-linter.io/minimum-three-replicas: "minimum three replicas not required"
       labels:
         control-plane: controller-manager
     spec:
