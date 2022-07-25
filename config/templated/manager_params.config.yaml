@@ -2,5 +2,12 @@
   path: /spec/template/spec/containers/0/image
   value: ${IMAGE}:${IMAGE_TAG}
 - op: add
-  path: /spec/template/spec/containers/0/args/-
-  value: --ansible-args='--extra-vars "floorist_image_tag=${FLOORIST_IMAGE_TAG}"'
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: FLOORIST_IMAGE
+    value: "${FLOORIST_IMAGE}"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: FLOORIST_IMAGE_TAG
+    value: "${FLOORIST_IMAGE_TAG}"

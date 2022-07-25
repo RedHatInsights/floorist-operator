@@ -73,7 +73,9 @@
                 terminationGracePeriodSeconds: 30
                 automountServiceAccountToken: false
                 containers:
-                - image: 'quay.io/cloudservices/floorist:{{ floorist_image_tag }}'
+                - image:
+                    "{{ lookup('ansible.builtin.env', 'FLOORIST_IMAGE') | default('quay.io/cloudservices/floorist', True) }}\
+                    :{{ lookup('ansible.builtin.env', 'FLOORIST_IMAGE_TAG') | default('a5d1b1b', True) }}"
                   imagePullPolicy: IfNotPresent
                   env:
                   - name: AWS_BUCKET

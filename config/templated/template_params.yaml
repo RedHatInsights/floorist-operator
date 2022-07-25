@@ -4,6 +4,9 @@
 - description: Operator image tag
   name: IMAGE_TAG
   value: latest
-- description: Floorist extractor tool image tag
+- description: Floorist exporter tool image
+  name: FLOORIST_IMAGE
+  value: quay.io/cloudservices/floorist
+- description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: latest
+  value: a5d1b1b

@@ -302,10 +302,13 @@ objects:
         - args:
           - "--leader-elect"
           - "--leader-election-id=floorist-operator"
-          - --ansible-args='--extra-vars "floorist_image_tag=${FLOORIST_IMAGE_TAG}"'
           env:
           - name: ANSIBLE_GATHERING
             value: explicit
+          - name: FLOORIST_IMAGE
+            value: "${FLOORIST_IMAGE}"
+          - name: FLOORIST_IMAGE_TAG
+            value: "${FLOORIST_IMAGE_TAG}"
           image: "${IMAGE}:${IMAGE_TAG}"
           livenessProbe:
             httpGet:
@@ -340,6 +343,9 @@ parameters:
 - description: Operator image tag
   name: IMAGE_TAG
   value: latest
+- description: Floorist extractor tool image
+  name: FLOORIST_IMAGE
+  value: quay.io/cloudservices/floorist
 - description: Floorist extractor tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: latest
+  value: a5d1b1b
