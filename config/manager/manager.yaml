@@ -32,6 +32,10 @@ spec:
           value: explicit
         securityContext:
           allowPrivilegeEscalation: false
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+          name: metrics
         livenessProbe:
           httpGet:
             path: /healthz

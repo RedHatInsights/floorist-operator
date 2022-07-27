@@ -277,6 +277,21 @@ objects:
   metadata:
     name: floorist-operator-manager-config
     namespace: floorist-operator-system
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: floorist-manager
+    name: floorist-operator-manager-metrics
+    namespace: floorist-operator-system
+  spec:
+    ports:
+    - name: metrics
+      port: 9000
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      control-plane: controller-manager
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
@@ -317,6 +332,10 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 20
           name: manager
+          ports:
+          - containerPort: 8080
+            name: metrics
+            protocol: TCP
           readinessProbe:
             httpGet:
               path: "/readyz"
@@ -343,9 +362,9 @@ parameters:
 - description: Operator image tag
   name: IMAGE_TAG
   value: latest
-- description: Floorist extractor tool image
+- description: Floorist exporter tool image
   name: FLOORIST_IMAGE
   value: quay.io/cloudservices/floorist
-- description: Floorist extractor tool image tag
+- description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
   value: a5d1b1b
