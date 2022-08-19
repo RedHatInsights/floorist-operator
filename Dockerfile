@@ -1,3 +1,5 @@
+# Rebuild counter: 1
+# increase (or change) the above comment to rebuild a new image with updated base
 FROM quay.io/operator-framework/ansible-operator:v1.22
 
 COPY requirements.yml ${HOME}/requirements.yml
