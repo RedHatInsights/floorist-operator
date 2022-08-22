@@ -295,6 +295,9 @@ objects:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
+    annotations:
+      ignore-check.kube-linter.io/minimum-three-replicas: minimum three replicas not
+        required
     labels:
       control-plane: controller-manager
     name: floorist-operator-controller-manager

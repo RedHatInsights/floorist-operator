@@ -6,6 +6,8 @@ metadata:
   namespace: system
   labels:
     control-plane: controller-manager
+  annotations:
+    ignore-check.kube-linter.io/minimum-three-replicas: "minimum three replicas not required"
 spec:
   selector:
     matchLabels:
