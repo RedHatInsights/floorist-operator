@@ -320,6 +320,7 @@ objects:
         - args:
           - "--leader-elect"
           - "--leader-election-id=floorist-operator"
+          - "--max-concurrent-reconciles=1"
           env:
           - name: ANSIBLE_GATHERING
             value: explicit
