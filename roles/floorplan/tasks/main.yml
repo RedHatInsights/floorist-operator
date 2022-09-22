@@ -75,7 +75,7 @@
                 containers:
                 - image:
                     "{{ lookup('ansible.builtin.env', 'FLOORIST_IMAGE') | default('quay.io/cloudservices/floorist', True) }}\
-                    :{{ lookup('ansible.builtin.env', 'FLOORIST_IMAGE_TAG') | default('a5d1b1b', True) }}"
+                    :{{ lookup('ansible.builtin.env', 'FLOORIST_IMAGE_TAG') | default('latest', True) }}"
                   imagePullPolicy: IfNotPresent
                   env:
                   - name: AWS_BUCKET
