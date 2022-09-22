@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  imagecheck:
+    name: Check baseimage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
