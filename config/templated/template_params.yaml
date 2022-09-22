@@ -7,6 +7,8 @@
 - description: Floorist exporter tool image
   name: FLOORIST_IMAGE
   value: quay.io/cloudservices/floorist
+# Note that the the tag default value is automated
+# by GitHub Action
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
   value: a5d1b1b

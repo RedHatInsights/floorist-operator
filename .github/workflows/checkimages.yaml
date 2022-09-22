@@ -27,3 +27,32 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           title: 'chore(image): update base image'
+  latest-floorist:
+    name: Check latest Floorist image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install skopeo, jq, and kustomize
+        run: sudo apt-get install -y skopeo jq
+      - name: Get and set latest Floorist image
+        run: |
+          tag=$(curl -s -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://api.github.com/repos/RedHatInsights/floorist/branches/master \
+            | jq -r '.commit.sha' \
+            | cut -c1-7)
+          [[ "$tag" != "null" && "$tag" != "" ]]
+          skopeo inspect "docker://quay.io/cloudservices/floorist:$tag" > /dev/null
+          sed -i "/name: FLOORIST_IMAGE_TAG/{n;s/value: .*/value: '$tag'/}" \
+            config/templated/template_params.yaml
+          make openshift-template
+      - name: Commit changes (if any)
+        run: |
+          git config user.name 'Update-a-Bot'
+          git config user.email 'insights@redhat.com'
+          git add -A
+          git commit -m "chore: update floorist image tag" || echo "No new changes"
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: 'chore: update floorist image tag to latest'
