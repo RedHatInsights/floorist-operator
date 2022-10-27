@@ -49,6 +49,9 @@ endif
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 
+# Build parameters
+IMG_BUILD_PARAMS ?=
+
 # OpenShift Template file
 OPENSHIFT_TEMPLATE ?= deploy_template.yaml
 
@@ -80,7 +83,7 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 
 .PHONY: podman-build
 podman-build: ## Build podman image with the manager.
-	podman build -t ${IMG} .
+	podman build ${IMG_BUILD_PARAMS} -t ${IMG} .
 
 .PHONY: podman-tag-latest
 podman-tag-latest: ## Tag current image as latest
