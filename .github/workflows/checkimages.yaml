@@ -17,6 +17,9 @@ jobs:
         run: |
           base=$(grep -Po '(?<=FROM )(.*)' Dockerfile)
           skopeo inspect "docker://$base" | grep -Po '(?<="Digest": ")([^"]+)' > .baseimagedigest
+          docker run --rm --entrypoint sh -u 0 quay.io/cloudservices/floorist-operator:latest -c \
+            'dnf -y upgrade > /dev/null; rpm -qa | sort | sha256sum' \
+            >> .baseimagedigest
       - name: Do change if the digest changed
         run: |
           git config user.name 'Update-a-Bot'
