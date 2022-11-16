@@ -1,5 +1,5 @@
 ---
-apiVersion: template.openshift.io/v1
+apiVersion: v1
 kind: Template
 metadata:
   name: floorist-operator
@@ -371,4 +371,4 @@ parameters:
   value: quay.io/cloudservices/floorist
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: a1ae2bc
+  value: 04d696d
