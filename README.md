@@ -176,25 +176,25 @@ The result is writte in the `deploy_template.yaml` file.
 
 ### Trying it out
 
-Create a sample [`Floorplan`](config/samples/metrics_v1alpha1_floorplan.yaml) within `default` namespace:
+Create a sample [`Floorplan`](config/samples/metrics_v1alpha1_floorplan.yaml) within `default` namespace named `floorplan-sample`:
 ```
 minikube kubectl -- apply -f config/samples/metrics_v1alpha1_floorplan.yaml
 ```
-and observe exisence of `floorplan-sample-floorist` ClowdApp.
+and observe exisence of `floorist-floorplan-sample-exporter` CronJob.
 
 It should look like this:
 ```
-$ minikube kubectl -- get cronjob floorplan-sample-exporter
+$ minikube kubectl -- get cronjob floorist-floorplan-sample-exporter
 NAME                        SCHEDULE    SUSPEND   ACTIVE   LAST SCHEDULE   AGE
 floorplan-sample-exporter   5 0 * * *   False     0        <none>          31s
 ```
 
 To see it in action, trigger a manual job:
 ```
-minikube kubectl -- create job floorplan-sample-exporter-manual --from=cronjob/floorplan-sample-exporter
+minikube kubectl -- create job floorist-floorplan-sample-exporter-manual --from=cronjob/floorist-floorplan-sample-exporter
 ```
 
 Observe status of the worker pod:
 ```
-minikube kubectl -- get pod -l 'job-name=floorplan-sample-exporter-manual'
+minikube kubectl -- get pod -l 'job-name=floorist-floorplan-sample-exporter-manual'
 ```
