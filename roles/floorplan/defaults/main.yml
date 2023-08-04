@@ -5,6 +5,13 @@ skip_schedules: # list of schedules that should be skipped, strings of 'min hr'
   - '0 0'
 env_name: env-default
 queries: []
+resources:
+  limits:
+    cpu: 100m
+    memory: 500Mi
+  requests:
+    cpu: 50m
+    memory: 250Mi
 database:
   sharedDbAppName:
 objectStore:

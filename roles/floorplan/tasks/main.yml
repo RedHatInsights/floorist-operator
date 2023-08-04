@@ -141,11 +141,11 @@
                     protocol: TCP
                   resources:
                     limits:
-                      cpu: 100m
-                      memory: 500Mi
+                      cpu: "{{ resources.get('limits', {}).get('cpu') | default('100m', true) }}"
+                      memory: "{{ resources.get('limits', {}).get('memory') | default('500Mi', true) }}"
                     requests:
-                      cpu: 50m
-                      memory: 250Mi
+                      cpu: "{{ resources.get('requests', {}).get('cpu') | default('50m', true) }}"
+                      memory: "{{ resources.get('requests', {}).get('memory') | default('250Mi', true) }}"
                   terminationMessagePath: /dev/termination-log
                   terminationMessagePolicy: File
                   volumeMounts:
