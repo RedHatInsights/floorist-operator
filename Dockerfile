@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/ansible-operator:v1.31
+FROM quay.io/operator-framework/ansible-operator:v1.33.0
 
 USER root
 
