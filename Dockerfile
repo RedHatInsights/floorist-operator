@@ -1,5 +1,7 @@
 FROM quay.io/operator-framework/ansible-operator:v1.33.0
 
+COPY .baseimagedigest ${HOME}
+
 USER root
 
 RUN dnf -y upgrade && \
