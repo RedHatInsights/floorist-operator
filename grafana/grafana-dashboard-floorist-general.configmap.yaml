@@ -28,8 +28,6 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 472,
-      "iteration": 1659605789338,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -103,7 +101,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "9.0.3",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -174,7 +172,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "9.0.3",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -241,7 +239,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "9.0.3",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -303,7 +301,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "9.0.3",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -365,7 +363,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "9.0.3",
+          "pluginVersion": "9.3.8",
           "targets": [
             {
               "datasource": {
@@ -454,8 +452,9 @@ data:
           "options": {
             "colWidth": 0.9,
             "legend": {
-              "displayMode": "hidden",
-              "placement": "bottom"
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
             },
             "rowHeight": 0.9,
             "showValue": "auto",
@@ -535,7 +534,8 @@ data:
             "colWidth": 0.9,
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "rowHeight": 0.9,
             "showValue": "auto",
@@ -562,12 +562,103 @@ data:
           "type": "status-history"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "fillOpacity": 70,
+                "lineWidth": 1
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "from": -999999999,
+                    "result": {
+                      "color": "red",
+                      "index": 0,
+                      "text": "FAILED"
+                    },
+                    "to": -1
+                  },
+                  "type": "range"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 600
+                  },
+                  {
+                    "color": "dark-orange",
+                    "value": 3600
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 14400
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 30
+          },
+          "id": 24,
+          "options": {
+            "colWidth": 0.9,
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "rowHeight": 0.9,
+            "showValue": "auto",
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "expr": "max(max_over_time(kube_job_status_completion_time{job_name=~\"floorist-.+-exporter-.+\"}[24h])) by (namespace) - max(max_over_time(kube_job_status_start_time{job_name=~\"floorist-.+-exporter-.+\"}[24h])) by (namespace)",
+              "interval": "24h",
+              "legendFormat": "{{namespace}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Job duration by namespace",
+          "type": "status-history"
+        },
+        {
           "collapsed": false,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 41
           },
           "id": 8,
           "panels": [],
@@ -585,6 +676,8 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -636,7 +729,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 42
           },
           "id": 18,
           "links": [],
@@ -644,7 +737,8 @@ data:
             "legend": {
               "calcs": [],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "mode": "single",
@@ -682,6 +776,8 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
@@ -748,7 +844,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 42
           },
           "id": 20,
           "links": [],
@@ -756,7 +852,8 @@ data:
             "legend": {
               "calcs": [],
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "showLegend": true
             },
             "tooltip": {
               "mode": "single",
@@ -785,7 +882,7 @@ data:
         }
       ],
       "refresh": false,
-      "schemaVersion": 36,
+      "schemaVersion": 37,
       "style": "dark",
       "tags": [],
       "templating": {
@@ -795,7 +892,7 @@ data:
             "auto_count": 30,
             "auto_min": "10s",
             "current": {
-              "selected": true,
+              "selected": false,
               "text": "1m",
               "value": "1m"
             },
@@ -861,7 +958,7 @@ data:
           },
           {
             "current": {
-              "selected": false,
+              "selected": true,
               "text": "crcp01ue1-prometheus",
               "value": "crcp01ue1-prometheus"
             },
@@ -887,7 +984,7 @@ data:
       "timezone": "",
       "title": "Floorist",
       "uid": "floorist",
-      "version": 17,
+      "version": 2,
       "weekStart": ""
     }
 metadata:
