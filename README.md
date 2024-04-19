@@ -80,7 +80,7 @@ spec:
   - prefix: # S3 folder path within a bucket
     query: >- # exporting query
       SELECT column FROM table;
-    chunksize: # optional chunk size (integer)
+    chunksize: # optional chunk size (integer; default: 1000; 0 to disable)
   database:
     secretName: # name of the database secret
   objectStore:
