@@ -87,6 +87,13 @@ spec:
     secretName: # name of the k8s secret with S3 credentials
   suspend: # option to suspend cronjobs (false by default)
   logLevel: # optional Python log level (default INFO)
+  resources: # optional to set resource limits (the following are defaults)
+    limits:
+      cpu: 100m
+      memory: 500Mi
+    requests:
+      cpu: 50m
+      memory: 250Mi
 ```
 
 See also [full sample](config/samples/metrics_v1alpha1_floorplan.yaml).
