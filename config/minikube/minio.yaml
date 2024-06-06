@@ -41,7 +41,7 @@ spec:
             secretKeyRef:
               key: aws_secret_access_key
               name: minio-access
-        image: quay.io/cloudservices/minio:RELEASE.2020-11-19T23-48-16Z-amd64
+        image: docker.io/minio/minio:latest
         livenessProbe:
           failureThreshold: 3
           initialDelaySeconds: 10
