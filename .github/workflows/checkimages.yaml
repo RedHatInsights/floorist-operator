@@ -49,7 +49,7 @@ jobs:
           skopeo inspect "docker://quay.io/cloudservices/floorist:$tag" > /dev/null
           sed -i "/name: FLOORIST_IMAGE_TAG/{n;s/value: .*/value: '$tag'/}" \
             config/templated/template_params.yaml
-          make openshift-template
+          make openshift-templates
       - name: Commit changes (if any)
         run: |
           git config user.name 'Update-a-Bot'

@@ -12,8 +12,9 @@ Kubernetes Operator to manage scheduling of metrics export with [Floorist](https
    1. [Prerequisites](#prerequisites)
    2. [Test environment](#test-environment)
    3. [Build and deploy](#build-and-deploy)
-   4. [OpenShift template](#openshift-template)
+   4. [OpenShift templates](#openshift-templates)
    5. [Trying it out](#trying-it-out)
+   6. [Stage test](#stage-test)
 
 
 ## Description
@@ -166,20 +167,33 @@ Replace `SETOPERATORIMAGETAG` with desired image tag for the operator.
 
 Optionally, `IMAGE_TAG_BASE` can be set to use a custom container registry. For example `IMAGE_TAG_BASE=quay.io/yourusername/floorist-operator`.
 
-### OpenShift template
+### OpenShift templates
 
 OpenShift utilizes [`Template`](https://docs.openshift.com/container-platform/4.7/openshift_images/using-templates.html)
 resources.
-Due to current limitation in some environments there was a `openshift-teplate` Makefile target created
-along with [`openshift_template_generator.rb`](config/plugins/openshift_template_generator.rb) tool.
-The `openshift-teplate` target generates an OpenShift `Template` out of kustomized resources
-configured within [`config/templated/`](config/templated/kustomization.yaml).
+Due to current limitation in some environments there was a `openshift-teplates` Makefile target created
+along with [`openshift_template_generator.rb`](config/plugins/openshift_template_generator.rb) and
+[`openshift_stage_test_template_generator.rb`](config/plugins/openshift_stage_test_template_generator.rb) tools.
+The `openshift-teplates` target generates an OpenShift `Template` out of kustomized resources
+configured within [`config/templated/`](config/templated/kustomization.yaml) and
+[`config/stage_test/`](config/stage_test/kustomization.yaml) .
 
-To (re)generate OpenShift template for this operator use:
+To (re)generate OpenShift templates for this operator and it's test job use:
+```
+make openshift-templates
+```
+The results are written in the `deploy_template.yaml` and `stage_test_template.yaml` files.
+
+It is also possible to (re)generate only the operator's or only the test's template:
+
+To (re)generate the operator's template:
 ```
 make openshift-template
 ```
-The result is writte in the `deploy_template.yaml` file.
+To (re)generate the test's template:
+```
+make openshift-stage-test-template
+```
 
 ### Trying it out
 
@@ -205,3 +219,25 @@ Observe status of the worker pod:
 ```
 minikube kubectl -- get pod -l 'job-name=floorist-floorplan-sample-exporter-manual'
 ```
+
+### Stage test
+
+For the purpose of testing before auto-promotion from staging to production environment we've developed a job with a
+24h delay. This test checks for the successful creation of cronjobs and jobs by the operator and it also asserts
+the successful completion of the jobs.
+
+It is possible to use the test locally, altough with limited usability in the form of non-unique job names. This means
+that each time the test is re-ran it needs to be deleted first.
+
+To run the test locally:
+```
+minikube kubectl -- apply -k /config/stage_test
+```
+
+If you'd like to see the test pass:
+  1. set up the [test environment](#test-environment)
+  2. create a [sample cronjob](#trying-it-out) and be sure to manually trigger a job
+  3. deploy the test using the command above
+
+To understand the differences in the test's configuration in a local and in the staging environment see the comments in
+[`openshift_stage_test_template_generator.rb`](config/plugins/openshift_stage_test_template_generator.rb).

@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: floorist-operator-stage-test
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: floorist-operator-stage-test-service-account
+    namespace: floorist-operator-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: floorist-operator-stage-test-role
+    namespace: floorist-operator-system
+  rules:
+  - apiGroups:
+    - batch
+    resources:
+    - cronjobs
+    - jobs
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: floorist-operator-stage-test-rolebinding
+    namespace: floorist-operator-system
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: floorist-operator-stage-test-role
+  subjects:
+  - kind: ServiceAccount
+    name: floorist-operator-stage-test-service-account
+    namespace: floorist-operator-system
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    namespace: floorist-operator-system
+    generateName: floorist-operator-stage-test-
+  spec:
+    template:
+      spec:
+        containers:
+        - args:
+          - stage_test.sh
+          command:
+          - sh
+          image: quay.io/cloudservices/floorist-operator:latest
+          imagePullPolicy: Always
+          name: floorist-operator-stage-test
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 300m
+              memory: 256Mi
+        restartPolicy: Never
+        serviceAccountName: floorist-operator-stage-test-service-account

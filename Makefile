@@ -52,8 +52,9 @@ IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
 # Build parameters
 IMG_BUILD_PARAMS ?=
 
-# OpenShift Template file
+# OpenShift Template files
 OPENSHIFT_TEMPLATE ?= deploy_template.yaml
+OPENSHIFT_STAGE_TEST_TEMPLATE ?= stage_test_template.yaml
 
 .PHONY: all
 all: podman-build
@@ -145,6 +146,15 @@ openshift-template: kustomize
 	$(KUSTOMIZE) build config/templated | \
 	config/plugins/openshift_template_generator.rb config/templated/template_params.yaml \
 	> "${OPENSHIFT_TEMPLATE}"
+
+.PHONY: openshift-stage-test-template
+openshift-stage-test-template: kustomize
+	$(KUSTOMIZE) build config/stage_test | \
+	config/plugins/openshift_stage_test_template_generator.rb \
+	> "${OPENSHIFT_STAGE_TEST_TEMPLATE}"
+
+.PHONY: openshift-templates
+openshift-templates: openshift-template openshift-stage-test-template
 
 .PHONY: ansible-operator
 ANSIBLE_OPERATOR = $(shell pwd)/bin/ansible-operator

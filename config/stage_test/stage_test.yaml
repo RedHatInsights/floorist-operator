@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stage-test
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: stage-test-service-account
+      containers:
+        - image: quay.io/cloudservices/floorist-operator:latest
+          name: floorist-operator-stage-test
+          imagePullPolicy: Always
+          command:
+            - sh
+          args:
+            - stage_test.sh
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 300m
+            limits:
+              memory: 512Mi
