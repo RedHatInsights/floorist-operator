@@ -12,6 +12,9 @@ login_container_registry() {
 
 IMAGE_TAG=$(git rev-parse --short=7 HEAD)
 
+# Workaround for podman bug containers/podman/issues#14568
+podman info
+
 login_container_registry "$QUAY_USER" "$QUAY_TOKEN" "quay.io"
 login_container_registry "$RH_REGISTRY_USER" "$RH_REGISTRY_TOKEN" "registry.redhat.io"
 
