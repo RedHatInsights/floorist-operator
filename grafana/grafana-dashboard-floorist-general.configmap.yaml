@@ -28,6 +28,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
+      "id": 714971,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -99,9 +100,11 @@ data:
               "fields": "",
               "values": false
             },
-            "textMode": "auto"
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "10.4.1",
           "targets": [
             {
               "datasource": {
@@ -170,9 +173,11 @@ data:
               "fields": "",
               "values": false
             },
-            "textMode": "auto"
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "10.4.1",
           "targets": [
             {
               "datasource": {
@@ -237,9 +242,11 @@ data:
               "fields": "",
               "values": false
             },
-            "textMode": "auto"
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "10.4.1",
           "targets": [
             {
               "datasource": {
@@ -299,9 +306,11 @@ data:
               "fields": "",
               "values": false
             },
-            "textMode": "auto"
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "10.4.1",
           "targets": [
             {
               "datasource": {
@@ -361,9 +370,11 @@ data:
               "fields": "/^version$/",
               "values": false
             },
-            "textMode": "auto"
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "9.3.8",
+          "pluginVersion": "10.4.1",
           "targets": [
             {
               "datasource": {
@@ -407,6 +418,11 @@ data:
               },
               "custom": {
                 "fillOpacity": 70,
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
                 "lineWidth": 1
               },
               "mappings": [
@@ -443,7 +459,7 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 13,
+            "h": 14,
             "w": 24,
             "x": 0,
             "y": 6
@@ -471,7 +487,7 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "max(kube_job_status_completion_time{job_name=~\"floorist-.+-exporter-.+\"}) by (namespace) > bool time() - 86400",
+              "expr": "max(label_replace(kube_job_status_completion_time{job_name=~\"floorist-.+-exporter-.+\"},\"app\", \"$1\",\"job_name\",\"floorist-(.+)-exporter-.+\")) by (app) > bool time() - 86400",
               "format": "time_series",
               "instant": false,
               "interval": "24h",
@@ -495,6 +511,11 @@ data:
               },
               "custom": {
                 "fillOpacity": 70,
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
                 "lineWidth": 1
               },
               "mappings": [],
@@ -524,10 +545,10 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 11,
+            "h": 14,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 20
           },
           "id": 16,
           "options": {
@@ -551,9 +572,9 @@ data:
                 "uid": "${datasource}"
               },
               "editorMode": "code",
-              "expr": "max(max_over_time(container_memory_working_set_bytes{pod=~\"floorist-.+-exporter-.+\"}[24h])) by (namespace)",
+              "expr": "max(label_replace(max_over_time(container_memory_working_set_bytes{pod=~\"floorist-.+-exporter-.+\"}[24h]), \"app\", \"$1\",\"pod\",\"floorist-(.+)-exporter-.+\")) by (app)",
               "interval": "24h",
-              "legendFormat": "{{namespace}}",
+              "legendFormat": "{{app}}",
               "range": true,
               "refId": "A"
             }
@@ -573,6 +594,11 @@ data:
               },
               "custom": {
                 "fillOpacity": 70,
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
                 "lineWidth": 1
               },
               "mappings": [
@@ -615,10 +641,10 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 11,
+            "h": 14,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 34
           },
           "id": 24,
           "options": {
@@ -642,7 +668,7 @@ data:
                 "uid": "${datasource}"
               },
               "editorMode": "code",
-              "expr": "max(max_over_time(kube_job_status_completion_time{job_name=~\"floorist-.+-exporter-.+\"}[24h])) by (namespace) - max(max_over_time(kube_job_status_start_time{job_name=~\"floorist-.+-exporter-.+\"}[24h])) by (namespace)",
+              "expr": "max(label_replace(max_over_time(kube_job_status_completion_time{job_name=~\"floorist-.+-exporter-.+\"}[24h]), \"app\", \"$1\",\"job_name\",\"floorist-(.+)-exporter-.+\")) by (app) - max(label_replace(max_over_time(kube_job_status_start_time{job_name=~\"floorist-.+-exporter-.+\"}[24h]), \"app\", \"$1\",\"job_name\",\"floorist-(.+)-exporter-.+\")) by (app)",
               "interval": "24h",
               "legendFormat": "{{namespace}}",
               "range": true,
@@ -658,7 +684,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 41
+            "y": 48
           },
           "id": 8,
           "panels": [],
@@ -676,6 +702,7 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
@@ -689,6 +716,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -729,10 +757,9 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 49
           },
           "id": 18,
-          "links": [],
           "options": {
             "legend": {
               "calcs": [],
@@ -776,6 +803,7 @@ data:
                 "mode": "palette-classic"
               },
               "custom": {
+                "axisBorderShow": false,
                 "axisCenteredZero": false,
                 "axisColorMode": "text",
                 "axisLabel": "",
@@ -789,6 +817,7 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
+                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -844,10 +873,9 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 42
+            "y": 49
           },
           "id": 20,
-          "links": [],
           "options": {
             "legend": {
               "calcs": [],
@@ -882,8 +910,7 @@ data:
         }
       ],
       "refresh": false,
-      "schemaVersion": 37,
-      "style": "dark",
+      "schemaVersion": 39,
       "tags": [],
       "templating": {
         "list": [
@@ -958,9 +985,9 @@ data:
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": "crcp01ue1-prometheus",
-              "value": "crcp01ue1-prometheus"
+              "value": "PC1EAC84DCBBF0697"
             },
             "hide": 0,
             "includeAll": false,
@@ -984,7 +1011,7 @@ data:
       "timezone": "",
       "title": "Floorist",
       "uid": "floorist",
-      "version": 2,
+      "version": 3,
       "weekStart": ""
     }
 metadata:
