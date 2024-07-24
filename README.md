@@ -222,10 +222,11 @@ minikube kubectl -- get pod -l 'job-name=floorist-floorplan-sample-exporter-manu
 ### Stage test
 
 For the purpose of testing before auto-promotion from staging to production environment we've developed a job with a
-24h delay. This test job checks for the successful creation of cronjobs and jobs by the operator and it asserts
-the successful completion of the jobs.
+24h delay. This test job checks for the successful creation of cronjobs and jobs by the operator, it asserts
+the successful completion of the jobs and compares the floorist images that the operator is configured with and the
+one in use by the jobs.
 
-It is possible to use the test locally, altough with the following limitations:
+It is possible to use the test locally, altough with the following limitation:
 - Job names are not unique: each time the test is re-ran it needs to be deleted first
 
 To run the test locally:
