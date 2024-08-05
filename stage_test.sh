@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CRONJOBS=$(oc get cronjobs | awk 'NR>1 {print $1}')
+CRONJOBS=$(oc get cronjobs -l "service=floorist" | awk 'NR>1 {print $1}')
 
 if [[ -z "$CRONJOBS" ]]; then
     echo "ERROR: no cronjobs found"
