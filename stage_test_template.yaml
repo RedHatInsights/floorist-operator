@@ -10,9 +10,23 @@ objects:
     name: floorist-operator-stage-test-service-account
     namespace: floorist-operator-system
 - apiVersion: rbac.authorization.k8s.io/v1
-  kind: ClusterRole
+  kind: Role
   metadata:
     name: floorist-operator-stage-test-role
+    namespace: floorist-operator-system
+  rules:
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: floorist-operator-cronjob-viewer-role
   rules:
   - apiGroups:
     - batch
@@ -23,22 +37,27 @@ objects:
     - get
     - list
     - watch
-  - apiGroups:
-    - apps
-    resources:
-    - deployments
-    verbs:
-    - get
-    - list
-    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: floorist-operator-stage-test-rolebinding
+    namespace: floorist-operator-system
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: floorist-operator-stage-test-role
+  subjects:
+  - kind: ServiceAccount
+    name: floorist-operator-stage-test-service-account
+    namespace: floorist-operator-system
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRoleBinding
   metadata:
-    name: floorist-operator-stage-test-rolebinding
+    name: floorist-operator-cronjob-viewer-rolebinding
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: ClusterRole
-    name: floorist-operator-stage-test-role
+    name: floorist-operator-cronjob-viewer-role
   subjects:
   - kind: ServiceAccount
     name: floorist-operator-stage-test-service-account

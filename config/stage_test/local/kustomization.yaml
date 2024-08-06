@@ -16,6 +16,8 @@ namePrefix: floorist-operator-
 #  someName: someValue
 
 resources:
+- stage_test_cluster_role_binding.yaml
+- stage_test_cluster_role.yaml
 - stage_test_service_account.yaml
 - stage_test_role.yaml
 - stage_test_role_binding.yaml
