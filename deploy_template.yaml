@@ -399,4 +399,4 @@ parameters:
   value: quay.io/cloudservices/floorist
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: f7c3147
+  value: be2e435
