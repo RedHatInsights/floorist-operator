@@ -68,7 +68,7 @@ objects:
                     description: Floorist Query definition.
                     properties:
                       chunksize:
-                        description: 
+                        description:
                         type: integer
                       prefix:
                         description: Valid folder path that will be created under
