@@ -16,7 +16,7 @@ jobs:
       - name: Check change
         run: |
           base=$(grep -Po '(?<=FROM )(.*)' Dockerfile)
-          skopeo inspect "docker://$base" | grep -Po '(?<="Digest": ")([^"]+)' > .baseimagedigest
+          skopeo inspect "docker://$base" | jq .Digest --raw-output > .baseimagedigest
           docker run --rm --entrypoint sh -u 0 quay.io/cloudservices/floorist-operator:latest -c \
             'dnf -y upgrade > /dev/null; rpm -qa | sort | sha256sum' \
             >> .baseimagedigest
