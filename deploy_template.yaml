@@ -68,7 +68,7 @@ objects:
                     description: Floorist Query definition.
                     properties:
                       chunksize:
-                        description:
+                        description: 
                         type: integer
                       prefix:
                         description: Valid folder path that will be created under
@@ -399,4 +399,4 @@ parameters:
   value: quay.io/cloudservices/floorist
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: 0ea3732
+  value: 0dc5aa3
