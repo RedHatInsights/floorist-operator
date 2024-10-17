@@ -2,7 +2,7 @@ resources:
 - ./local
 
 images:
-- name: quay.io/cloudservices/floorist-operator
+- name: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist-operator
   newName: ${IMAGE}
   newTag: ${IMAGE_TAG}
 

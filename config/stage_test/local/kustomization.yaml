@@ -25,5 +25,5 @@ resources:
 
 images:
 - name: controller
-  newName: quay.io/cloudservices/floorist-operator
+  newName: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist-operator
   newTag: latest

@@ -34,7 +34,7 @@ spec:
         - name: ANSIBLE_GATHERING
           value: explicit
         - name: FLOORIST_IMAGE
-          value: quay.io/cloudservices/floorist
+          value: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist
         - name: FLOORIST_IMAGE_TAG
           value: latest
         securityContext:
