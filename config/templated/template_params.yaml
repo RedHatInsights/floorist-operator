@@ -11,4 +11,4 @@
 # by GitHub Action
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: '0ea3732'
+  value: '0dc5aa3'
