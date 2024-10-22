@@ -1,12 +1,12 @@
 - description: Operator image
   name: IMAGE
-  value: quay.io/cloudservices/floorist-operator
+  value: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist-operator
 - description: Operator image tag
   name: IMAGE_TAG
   value: latest
 - description: Floorist exporter tool image
   name: FLOORIST_IMAGE
-  value: quay.io/cloudservices/floorist
+  value: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist
 # Note that the the tag default value is automated
 # by GitHub Action
 - description: Floorist exporter tool image tag
