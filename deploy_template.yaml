@@ -399,4 +399,4 @@ parameters:
   value: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: 0dc5aa3
+  value: 915f1d2
