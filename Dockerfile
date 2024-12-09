@@ -1,4 +1,4 @@
-FROM registry.redhat.io/openshift4/ose-ansible-rhel9-operator:v4.17
+FROM registry.redhat.io/openshift4/ose-ansible-rhel9-operator:v4.17@sha256:89d316e428bb52a886985c6aeda54cc9292925e19b87c7f6a1f3554bc7b2bd1c
 
 COPY .baseimagedigest ${HOME}
 
