@@ -12,3 +12,6 @@
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
   value: '19dfdc1'
+- description: Pull secrets for deploying image
+  name: IMAGE_PULL_SECRETS
+  value: '[]'
