@@ -171,9 +171,9 @@ Optionally, `IMAGE_TAG_BASE` can be set to use a custom container registry. For 
 
 OpenShift utilizes [`Template`](https://docs.openshift.com/container-platform/4.7/openshift_images/using-templates.html)
 resources.
-Due to current limitation in some environments there was a `openshift-teplates` Makefile target created
+Due to current limitation in some environments there was a `openshift-templates` Makefile target created
 along with the [`openshift_template_generator.rb`](config/plugins/openshift_template_generator.rb) tool.
-The `openshift-teplates` target generates an OpenShift `Template` out of kustomized resources
+The `openshift-templates` target generates an OpenShift `Template` out of kustomized resources
 configured within [`config/templated/`](config/templated/kustomization.yaml) and
 [`config/stage_test/`](config/stage_test/kustomization.yaml) .
 
