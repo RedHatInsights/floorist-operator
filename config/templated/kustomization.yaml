@@ -8,10 +8,16 @@ resources:
 - ../rbac
 - ../manager
 
-patchesJson6902:
+patches:
 - path: manager_params.config.yaml
   target:
     group: apps
     version: v1
     kind: Deployment
+    name: controller-manager
+
+- path: service_account_params.config.yaml
+  target:
+    version: v1
+    kind: ServiceAccount
     name: controller-manager
