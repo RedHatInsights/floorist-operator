@@ -14,5 +14,12 @@ patches:
     name: stage-test
     version: v1
 
-patchesStrategicMerge:
-- clusterrole_patch.yaml
+- path: test_service_account_params.config.yaml
+  target:
+    version: v1
+    kind: ServiceAccount
+    name: stage-test-service-account
+
+- path: clusterrole_patch.yaml
+
+- path: clusterrolebinding_patch.yaml
