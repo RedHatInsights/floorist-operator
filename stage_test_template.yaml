@@ -6,7 +6,7 @@ metadata:
 objects:
 - apiVersion: v1
   imagePullSecrets:
-  - name: "${IMAGE_PULL_SECRETS}"
+  - name: "${{IMAGE_PULL_SECRETS}}"
   kind: ServiceAccount
   metadata:
     name: floorist-operator-stage-test-service-account
