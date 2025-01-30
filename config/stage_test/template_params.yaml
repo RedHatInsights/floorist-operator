@@ -5,6 +5,3 @@
   name: IMAGE_TAG
   value: ''
   required: true
-- description: Pull secrets for deploying image
-  name: IMAGE_PULL_SECRETS
-  value: '[]'
