@@ -132,7 +132,8 @@ objects:
       subresources:
         status: {}
 - apiVersion: v1
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: "${IMAGE_PULL_SECRET_NAME}"
   kind: ServiceAccount
   metadata:
     name: floorist-operator-controller-manager
@@ -401,3 +402,6 @@ parameters:
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
   value: 19dfdc1
+- description: Pull secrets for deploying image
+  name: IMAGE_PULL_SECRET_NAME
+  value: rh-registry-pull
