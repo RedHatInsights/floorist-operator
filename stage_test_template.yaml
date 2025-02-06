@@ -5,7 +5,8 @@ metadata:
   name: floorist-operator-stage-test
 objects:
 - apiVersion: v1
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: "${IMAGE_PULL_SECRET_NAME}"
   kind: ServiceAccount
   metadata:
     name: floorist-operator-stage-test-service-account
@@ -71,3 +72,6 @@ parameters:
   name: IMAGE_TAG
   value: ''
   required: true
+- description: Pull secrets for deploying image
+  name: IMAGE_PULL_SECRET_NAME
+  value: rh-registry-pull
