@@ -401,7 +401,7 @@ parameters:
   value: quay.io/redhat-services-prod/insights-management-tenant/insights-floorist/floorist
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: 66b8de4
+  value: 4ddc9a4
 - description: Pull secrets for deploying image
   name: IMAGE_PULL_SECRET_NAME
   value: rh-registry-pull
