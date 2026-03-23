@@ -42,8 +42,8 @@ spec:
           - -c
           - |
             set -e
-            /usr/bin/mc config host add myminio "$MINIO_ENDPOINT" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
+            /usr/bin/mc alias set myminio "$MINIO_ENDPOINT" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
             /usr/bin/mc mb "myminio/$MINIO_BUCKET";
-            /usr/bin/mc policy set download "myminio/$MINIO_BUCKET";
+            /usr/bin/mc anonymous set download "myminio/$MINIO_BUCKET";
             exit 0;
       restartPolicy: OnFailure
