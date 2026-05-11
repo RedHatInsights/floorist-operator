@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Install skopeo, jq, and kustomize
         run: sudo apt-get install -y skopeo jq
       - name: Get and set latest Floorist image
