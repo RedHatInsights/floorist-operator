@@ -24,14 +24,12 @@ jobs:
           sed -i "/name: FLOORIST_IMAGE_TAG/{n;s/value: .*/value: '$tag'/}" \
             config/templated/template_params.yaml
           make openshift-templates
-      - name: Commit changes (if any)
-        run: |
-          git config user.name 'Update-a-Bot'
-          git config user.email 'insights@redhat.com'
-          git add -A
-          git commit -m "chore: update floorist image tag" || echo "No new changes"
-      - name: Create pull request
+      - name: Open or update PR if the digest changed
         uses: peter-evans/create-pull-request@v8
         with:
-          title: 'chore: update floorist image tag to latest'
-          branch: automation/floorist-latest
+          title: 'chore(image): update base image'
+          branch: automation/base-image
+          commit-message: 'chore(image): update and rebuild image'
+          committer: 'Update-a-Bot <insights@redhat.com>'
+          author: 'Update-a-Bot <insights@redhat.com>'
+          sign-commits: true
