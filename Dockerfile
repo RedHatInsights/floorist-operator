@@ -1,4 +1,4 @@
-FROM registry.redhat.io/openshift4/ose-ansible-rhel9-operator:v4.19.0@sha256:e7d433e2f6f330e3537db9fd2543ef84e61b81ad92befb72cfb715735b3a371d
+FROM registry.redhat.io/openshift4/ose-ansible-rhel9-operator:v4.19.0@sha256:83aaf8f5a66aae2246fd2387be6ced7f7349cfa21727065695f0d0ecbc4fdc0c
 
 USER root
 
