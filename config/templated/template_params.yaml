@@ -11,7 +11,7 @@
 # by GitHub Action
 - description: Floorist exporter tool image tag
   name: FLOORIST_IMAGE_TAG
-  value: '0017e60'
+  value: '5a4ef12'
 - description: Pull secrets for deploying image
   name: IMAGE_PULL_SECRET_NAME
   value: 'rh-registry-pull'
