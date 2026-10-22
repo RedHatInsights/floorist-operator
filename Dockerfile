@@ -8,6 +8,14 @@ RUN curl -L --output oc.tar.gz \
  mv oc /usr/local/bin/ && \
  rm oc.tar.gz
 
+RUN export d=/etc/pki/ca-trust/source/blocklist; \
+    trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert' \
+    $d/emSign_ECC_Root_CA_-_G3.pem && \
+    trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=Comodo%20AAA%20Services%20root;type=cert' \
+    $d/Comodo_AAA_Services_root.pem && update-ca-trust
+
 USER ${USER_UID}
 
 COPY requirements.yml ${HOME}/requirements.yml
